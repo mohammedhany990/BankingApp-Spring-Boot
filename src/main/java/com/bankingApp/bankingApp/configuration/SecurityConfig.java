@@ -39,47 +39,45 @@ public class SecurityConfig {
         this.jwtAuthentication = jwtAuthentication;
     }
 
-  @Bean
-public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http
-        // Disable CSRF for APIs (since it's stateless and doesn't use cookies)
-        .csrf(csrf -> csrf.disable())
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                // Disable CSRF for APIs (since it's stateless and doesn't use cookies)
+                .csrf(csrf -> csrf.disable())
 
-        // Authorize requests config
-        .authorizeHttpRequests(auth -> auth
-            // Allow public access to user registration endpoint
-            .requestMatchers(HttpMethod.POST, "/api/user/signup").permitAll()
-            .requestMatchers(HttpMethod.POST, "/api/user/login").permitAll()
-            // Allow Swagger and documentation endpoints
-            .requestMatchers(
-                "/swagger-ui/**",
-                "/v3/api-docs/**",
-                "/swagger-resources/**",
-                "/webjars/**")
-            .permitAll()
-            // All other endpoints require authentication
-            .anyRequest().authenticated()
-        )
+                // Authorize requests config
+                .authorizeHttpRequests(auth -> auth
+                        // Allow public access to user registration endpoint
+                        .requestMatchers(HttpMethod.POST, "/api/user/signup").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/user/login").permitAll()
+                        // Allow Swagger and documentation endpoints
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html",
+                                "/webjars/**")
+                        .permitAll()
+                        // All other endpoints require authentication
+                        .anyRequest().authenticated())
 
-        // Exception handling with custom entry point
-        .exceptionHandling(exception -> exception
-            .authenticationEntryPoint(jwtAuthentication)
-        )
+                // Exception handling with custom entry point
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(jwtAuthentication))
 
-        // Stateless session management for JWT
-        .sessionManagement(session -> session
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        )
+                // Stateless session management for JWT
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-        // Set custom authentication provider
-        .authenticationProvider(authenticationProvider())
+                // Set custom authentication provider
+                .authenticationProvider(authenticationProvider())
 
         // Add JWT filter before username-password authentication filter
-        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        // .addFilterBefore(jwtAuthenticationFilter,
+        // UsernamePasswordAuthenticationFilter.class)
+        ;
 
-    return http.build();
-}
-
+        return http.build();
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)

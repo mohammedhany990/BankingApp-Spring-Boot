@@ -12,11 +12,11 @@ import io.swagger.v3.oas.models.info.Info;
 public class SwaggerConfig {
 
     @Bean
-    public OpenAPI apiInfo() {
+    public OpenAPI customOpenAPI() {
         return new OpenAPI()
-                .info(new Info()
-                        .title("Banking App API")
-                        .description("API documentation for Banking App")
-                        .version("1.0.0"));
+            .info(new Info()
+                .title("Banking App API")
+                .version("1.0")
+                .description("Swagger documentation for the Banking API"));
     }
 }

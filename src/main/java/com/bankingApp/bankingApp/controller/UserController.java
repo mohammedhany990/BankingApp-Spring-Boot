@@ -3,6 +3,9 @@ package com.bankingApp.bankingApp.controller;
 import com.bankingApp.bankingApp.dto.*;
 import com.bankingApp.bankingApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,23 +34,17 @@ public class UserController {
         return userService.nameEnquiry(enquiryRequest);
     }
 
-    @PostMapping("/deposit")
-    public BankResponse creditAccount(@RequestBody CreditDebitRequest creditDebitRequest) {
-        return userService.creditAccount(creditDebitRequest);
-    }
-
-    @PostMapping("/withdraw")
-    public BankResponse withdraw(@RequestBody CreditDebitRequest creditDebitRequest) {
-        return userService.debitAccount(creditDebitRequest);
-    }
-
-    @PostMapping("/transfer")
-    public BankResponse transfer(@RequestBody TransferRequest transferRequest) {
-        return userService.transfer(transferRequest);
-    }
-
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginDto loginDto) {
         return userService.login(loginDto);
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody ChangePasswordRequest request) {
+
+        userService.changePassword(userDetails.getUsername(), request);
+        return ResponseEntity.ok("Password changed successfully");
     }
 }

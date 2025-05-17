@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CreditDebitRequest {
+public class DepositWithdrawRequest {
     private String accountNumber;
     private BigDecimal amount;
    
